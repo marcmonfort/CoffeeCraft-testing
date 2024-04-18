@@ -3,6 +3,10 @@
  */
 package hhhh;
 
+import hhhh.model.RootResponse;
+import hhhh.model.TokenResponse;
+import hhhh.network.ApiService;
+import hhhh.network.RetrofitClient;
 import retrofit2.Call; // Import the Call class
 import retrofit2.Retrofit; // Import the Retrofit class
 import retrofit2.Callback; // Import the Callback class
@@ -10,34 +14,23 @@ import retrofit2.Callback; // Import the Callback class
 import retrofit2.Response; // Import the Response class
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
-
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
+        Call<TokenResponse> call = apiService.getAccessToken("admin@example.com",
+                "changethis");
 
-        AuthService authService = ApiService.createService(); // Ensure createService is correctly
-                                                              // implemented
-        Call<AuthService.AccessTokenResponse> call = authService.getAccessToken("admin@example.com", "changethis");
-
-        call.enqueue(new Callback<AuthService.AccessTokenResponse>() {
+        call.enqueue(new Callback<TokenResponse>() {
             @Override
-            public void onResponse(Call<AuthService.AccessTokenResponse> call,
-                    Response<AuthService.AccessTokenResponse> response) {
+            public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
                 if (response.isSuccessful()) {
-                    // Ensure your AccessTokenResponse has a getAccessToken method
-                    String accessToken = response.body().getAccessToken();
-                    System.out.println("Access Token: " + accessToken);
+                    System.out.println("Access Token: " + response.body().getAccessToken());
                 } else {
-                    // Handle error response properly
-                    System.err.println("Request Error :: " + response.errorBody());
+                    System.out.println("Login failed: " + response.errorBody().toString());
                 }
             }
 
             @Override
-            public void onFailure(Call<AuthService.AccessTokenResponse> call, Throwable t) {
-                // Handle failure properly
+            public void onFailure(Call<TokenResponse> call, Throwable t) {
                 t.printStackTrace();
             }
         });
