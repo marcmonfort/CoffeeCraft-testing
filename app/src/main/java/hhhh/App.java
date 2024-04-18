@@ -66,5 +66,49 @@ public class App {
             }
         });
 
+        ////////////////////////////////
+        // Get the current user
+        String token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQxNjgzNDgsInN1YiI6IjIifQ.A4t8xk0eopDjr8yKlLBY5PWtbj8AUlqqu9mO2jL5Ypo";
+        // String token = "Bearer
+        // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQxNDk5MDUsInN1YiI6IjEifQ.uYpNOYk2S4BdQrKGLYWlnT7ltIPkySt-we-rFGMHhjM";
+
+        Call<UserOut> call_3 = apiService.getCurrentUser(token);
+        call_3.enqueue(new Callback<UserOut>() {
+            @Override
+            public void onResponse(Call<UserOut> call, Response<UserOut> response) {
+                if (response.isSuccessful()) {
+                    UserOut currentUser = response.body();
+                    System.out.println("UserID: " + currentUser.getId() + ", Email: " + currentUser.getEmail());
+                } else {
+                    System.out.println("Failed to retrieve user: " + response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserOut> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        ////////////////////////////////
+        // Suggest a coffee
+        Call<String> call_4 = apiService.suggestCoffee(token, "happy", "medium");
+        call_4.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("Suggested Coffee: " + response.body());
+                } else {
+                    System.out.println("Failed to get coffee suggestion: " + response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                System.out.println("Error fetching coffee suggestion");
+                t.printStackTrace();
+            }
+        });
+
     }
 }

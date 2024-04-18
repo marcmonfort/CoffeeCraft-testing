@@ -1,5 +1,8 @@
 package hhhh.network;
 
+import org.checkerframework.checker.units.qual.h;
+
+import hhhh.model.CoffeeType;
 import hhhh.model.ItemResponse;
 import hhhh.model.RootResponse;
 import hhhh.model.TokenResponse;
@@ -10,6 +13,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -24,4 +28,13 @@ public interface ApiService {
 
     @POST("users/open")
     Call<UserOut> createUserOpen(@Body UserCreateOpen user);
+
+    @GET("users/me")
+    Call<UserOut> getCurrentUser(@Header("Authorization") String authToken);
+
+    @GET("coffee")
+    Call<String> suggestCoffee(
+            @Header("Authorization") String authToken,
+            @Query("mood") String mood,
+            @Query("sugar") String sugar);
 }
