@@ -5,6 +5,8 @@ package hhhh;
 
 import hhhh.model.RootResponse;
 import hhhh.model.TokenResponse;
+import hhhh.model.UserCreateOpen;
+import hhhh.model.UserOut;
 import hhhh.network.ApiService;
 import hhhh.network.RetrofitClient;
 import retrofit2.Call; // Import the Call class
@@ -16,6 +18,9 @@ import retrofit2.Response; // Import the Response class
 public class App {
     public static void main(String[] args) {
         ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
+
+        ////////////////////////////////
+        // Get the access token
         Call<TokenResponse> call = apiService.getAccessToken("admin@example.com",
                 "changethis");
 
@@ -31,6 +36,32 @@ public class App {
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        ////////////////////////////////
+        // Create a new user
+        UserCreateOpen newUser = new UserCreateOpen();
+        newUser.setEmail("newuser@example.com");
+        newUser.setPassword("securepassword123");
+        newUser.setFullName("New User");
+        newUser.setAge(30);
+        newUser.setCountry("US");
+
+        Call<UserOut> call_2 = apiService.createUserOpen(newUser);
+        call_2.enqueue(new Callback<UserOut>() {
+            @Override
+            public void onResponse(Call<UserOut> call, Response<UserOut> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("User Created: ID = " + response.body().getId());
+                } else {
+                    System.out.println("Failed to create user: " + response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserOut> call, Throwable t) {
                 t.printStackTrace();
             }
         });
